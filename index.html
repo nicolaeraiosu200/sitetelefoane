@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog Telefoane</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .phone-card {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .phone-card h3 {
+            margin-top: 0;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .phone-card p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .phone-card .price {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+        .phone-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="phone-list">
+        </div>
+
+    <script>
+        const phonesContainer = document.getElementById('phone-list');
+
+        function renderPhones(phones) {
+            phones.forEach(phone => {
+                const card = document.createElement('div');
+                card.className = 'phone-card';
+                card.innerHTML = `
+                    <img src="./images/${phone.model.replace(/\s/g, '-')}.jpg" alt="${phone.model}">
+                    <h3>${phone.model}</h3>
+                    <p><strong>Brand:</strong> ${phone.brand_name}</p>
+                    <p><strong>Rating:</strong> ${phone.avg_rating || 'N/A'}</p>
+                    <p><strong>RAM:</strong> ${phone.ram_capacity || 'N/A'} GB</p>
+                    <p><strong>Stocare:</strong> ${phone.internal_memory || 'N/A'} GB</p>
+                    <p><strong>Cameră:</strong> ${phone.primary_camera_rear || 'N/A'} MP</p>
+                    <p class="price">Preț: ${new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(phone.price)}</p>
+                `;
+                phonesContainer.appendChild(card);
+            });
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                if (values.length === headers.length) {
+                    const entry = {};
+                    headers.forEach((header, index) => {
+                        entry[header] = values[index];
+                    });
+                    data.push(entry);
+                }
+            }
+            return data;
+        }
+
+        fetch('smartphones.csv')
+            .then(response => response.text())
+            .then(text => {
+                const phones = parseCSV(text);
+                renderPhones(phones);
+            })
+            .catch(error => {
+                console.error('Eroare la încărcarea fișierului CSV:', error);
+                phonesContainer.innerHTML = '<p>Eroare la încărcarea datelor. Vă rugăm să verificați dacă fișierul smartphones.csv se află în același director și dacă ați rulat un server local.</p>';
+            });
+    </script>
+
+</body>
+</html>
