@@ -71,7 +71,7 @@
                     <p><strong>RAM:</strong> ${phone.ram_capacity || 'N/A'} GB</p>
                     <p><strong>Stocare:</strong> ${phone.internal_memory || 'N/A'} GB</p>
                     <p><strong>Cameră:</strong> ${phone.primary_camera_rear || 'N/A'} MP</p>
-                    <p class="price">Preț: ${new Intl.NumberFormat('ro-RO', { style: 'currency', currency: '€' }).format(phone.price)}</p>
+                    <p class="price">Preț: ${new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(phone.price)}</p>
                 `;
                 phonesContainer.appendChild(card);
             });
@@ -107,4 +107,4 @@
     </script>
 
 </body>
-</html> 
+</html>
